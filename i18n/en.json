@@ -1,0 +1,18 @@
+{
+	"@metadata": {
+		"authors": "Sleeping-Lion"
+	},
+	"relatedlinks": "Related Links",	
+	"no": "No",
+	"subject": "Subject",
+	"rel_url": "URL",
+	"enable": "Enable",
+	"edit" : "Edit",
+	"please_login" : "Please Login",
+	"add_site" : "Add new site..",
+	"no_data" : "no data..!!",
+	"no_link" : "No Link...",
+	"insert" : "Insert",
+	"delete" : "Delete",
+	"modify_all" : "Modify All"	
+}
