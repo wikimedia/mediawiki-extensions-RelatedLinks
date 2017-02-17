@@ -2,7 +2,8 @@
 	"@metadata": {
 		"authors": "Sleeping-Lion"
 	},
-	"relatedlinks": "Related Links",	
+	"relatedlinks": "Related Links",
+	"relatedlinks-desc": "Displays page-related links in sidebar",
 	"no": "No",
 	"subject": "Subject",
 	"rel_url": "URL",
@@ -14,5 +15,5 @@
 	"no_link" : "No Link...",
 	"insert" : "Insert",
 	"delete" : "Delete",
-	"modify_all" : "Modify All"	
+	"modify_all" : "Modify All"
 }

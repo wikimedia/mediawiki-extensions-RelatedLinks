@@ -3,7 +3,7 @@
 	"author": "Sleeping-Lion",
 	"version": "1.0.0",
 	"url": "https://www.mediawiki.org/wiki/Extension:RelatedLinks",
-	"descriptionmsg": "Special Page Related Links",
+	"descriptionmsg": "relatedlinks-desc",
 	"type": "specialpage",
 	"license-name": "MIT",
 	"requires": {
