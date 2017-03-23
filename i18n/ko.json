@@ -2,17 +2,17 @@
 	"@metadata": {
 		"authors": "Sleeping-Lion"
 	},
-	"relatedlinks": "연관사이트",	
+	"relatedlinks": "연관사이트",
 	"no": "번호",
 	"subject": "제목",
 	"rel_url": "연관 URL",
 	"enable": "사용여부",
-	"edit" : "수정",
-	"please_login" : "먼저 로그인 해주세요",	
-	"add_site" : "Add new site..",
-	"no_data" : "데이터 없음..!!",
-	"no_link" : "No Link...",
-	"insert" : "입력",
-	"delete" : "삭제",
-	"modify_all" : "수정 적용"	
+	"edit": "수정",
+	"please_login": "먼저 로그인 해주세요",
+	"add_site": "Add new site..",
+	"no_data": "데이터 없음..!!",
+	"no_link": "No Link...",
+	"insert": "입력",
+	"delete": "삭제",
+	"modify_all": "수정 적용"
 }
