@@ -16,12 +16,12 @@ function initiateSettingsForRelatedLinks()
         "	`links_order` TINYINT(3) NOT NULL DEFAULT 0, " .
         "	`links_subject` VARCHAR(60) NOT NULL, " .
         "	`links_url` VARCHAR(255) NOT NULL, " .
-        "	`links_enable` TINYINT(1) NOT NULL DEFAULT 0, " .
+        "	`links_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0, " .
         "	`links_datetime` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', " .
         "	`links_import_domain` VARCHAR(50) NOT NULL DEFAULT '', " .
         "	PRIMARY KEY (`id`), " .
         "	UNIQUE KEY (`user_id`, `links_id`, `links_url`), " .
-        "	KEY index_sort (`links_id`, `links_order`), " .
+        "	KEY index_sort (`links_id`, `links_order`)" .
         ")";
     return $dbw->query($query);
 }
@@ -59,7 +59,7 @@ class RelatedLinksHooks
 <div class="portlet" id="p-relatedlinks">
 <h3>
 <?php echo wfMessage('relatedlinks') ?>
-[<a href="<?php echo(SkinTemplate::makeSpecialUrl('relatedlinks') . '&amp;link_id=' . $links_id)?>"><?php echo wfMessage('edit') ?></a>]
+[<a href="<?php echo(SkinTemplate::makeSpecialUrl('relatedlinks', 'link_id=' . $links_id))?>"><?php echo wfMessage('edit') ?></a>]
 </h3>
 <div class="pBody">
 <ul>
