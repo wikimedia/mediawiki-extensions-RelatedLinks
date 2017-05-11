@@ -30,7 +30,7 @@ class SpecialRelatedLinks extends SpecialPage
 
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $link_id = filter_var($_POST['link_id'], FILTER_SANITIZE_STRING);
-            $return_url = SkinTemplate::makeSpecialUrl('RelatedLinks') . '&amp;link_id=' . $link_id;
+            $return_url = SkinTemplate::makeSpecialUrl('RelatedLinks', 'link_id=' . $link_id);
 
             switch ($_POST['submit_type']) {
                 case 'insert':
@@ -108,14 +108,16 @@ class SpecialRelatedLinks extends SpecialPage
 
                     foreach ($_POST['order'] as $index => $order) {
                         $links_enable=0;
+                        $subject = filter_var($_POST['subject'][$index], FILTER_SANITIZE_STRING);
+                        $url = filter_var($_POST['url'][$index], FILTER_VALIDATE_URL);
 
                         if (isset($_POST['enable'][$index])) {
                             $links_enable=1;
                         }
 
-                        $data = array('links_order' => $order, 'links_subject' => $_POST['subject'][$index], 'links_url' => $_POST['url'][$index], 'links_enable' => $links_enable);
+                        $data = array('links_order' => $order, 'links_subject' => $subject, 'links_url' => $url, 'links_enable' => $links_enable);
                         $dbw -> update($tbl_links, $data, array('id' => $index));
-                        $output .= '<li>' . $_POST['subject'][$index] . ' (' . $_POST['url'][$index] . ')' . ($links_enable ? ' : '.wfMessage('enable') : ' : '.wfMessage('disable')) . '</li>';
+                        $output .= '<li>' . $subject . ' (' . $url . ')' . ($links_enable ? ' : '.wfMessage('enable') : ' : '.wfMessage('disable')) . '</li>';
                     }
 
                     $output .= '</ul>';
