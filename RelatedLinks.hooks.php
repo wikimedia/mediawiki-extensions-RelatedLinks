@@ -31,7 +31,7 @@ class RelatedLinksHooks
     /*
       * Draw Related Links Management
       */
-    public static function SkinTemplateToolboxEnd($this)
+    public static function SkinTemplateToolboxEnd($sk)
     {
         $dbr = wfGetDB(DB_SLAVE);
 
