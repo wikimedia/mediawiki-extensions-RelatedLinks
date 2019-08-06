@@ -20,7 +20,7 @@ class SpecialRelatedLinks extends SpecialPage
         $wgOutput->addModules('ext.relatedLinks');
         $this -> setHeaders();
 
-        if (in_array("sysop", $wgUser -> mGroups) == false) {
+        if (in_array("sysop", $wgUser -> getGroups()) == false) {
             $wgOutput -> addHTML(wfMessage('please_login'));
             return false;
         }
