@@ -28,7 +28,7 @@ class SpecialRelatedLinks extends SpecialPage
       //  $param = $wgRequest -> getText('title');
         $link_id = filter_var($_GET['link_id'], FILTER_SANITIZE_STRING);
 
-        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        if ($wgRequest->wasPosted()) {
             $link_id = filter_var($_POST['link_id'], FILTER_SANITIZE_STRING);
             $return_url = SkinTemplate::makeSpecialUrl('RelatedLinks', 'link_id=' . $link_id);
 
