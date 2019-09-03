@@ -33,6 +33,7 @@ class RelatedLinksHooks
       */
     public static function SkinTemplateToolboxEnd($sk)
     {
+        global $wgRequest;
         $dbr = wfGetDB(DB_SLAVE);
 
         if ($dbr->tableExists('related_links')) {
@@ -46,7 +47,7 @@ class RelatedLinksHooks
             $tbl_links = $dbr->tableName('related_links');
         }
 
-        $links_id = filter_var($_GET['title'], FILTER_SANITIZE_STRING);
+        $links_id = filter_var($wgRequest->getVal('title'), FILTER_SANITIZE_STRING);
 
         $fields    = array( 'links_subject', 'links_url' );
         $conds    = array('links_enable'    => 1,'links_id'=> $links_id);
