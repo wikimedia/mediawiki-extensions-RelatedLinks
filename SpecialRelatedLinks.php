@@ -21,23 +21,22 @@ class SpecialRelatedLinks extends SpecialPage
             return false;
         }
 
-      //  $param = $wgRequest -> getText('title');
-        $link_id = filter_var($_GET['link_id'], FILTER_SANITIZE_STRING);
+        $link_id = filter_var($wgRequest->getVal('link_id'), FILTER_SANITIZE_STRING);
 
         if ($wgRequest->wasPosted()) {
             $link_id = filter_var($_POST['link_id'], FILTER_SANITIZE_STRING);
             $return_url = SkinTemplate::makeSpecialUrl('RelatedLinks', 'link_id=' . $link_id);
 
-            switch ($_POST['submit_type']) {
+            switch ($wgRequest->getVal('submit_type')) {
                 case 'insert':
-                    $new_subject = filter_var($_POST['subject'], FILTER_SANITIZE_STRING);
-                    $new_url = filter_var($_POST['url'], FILTER_VALIDATE_URL);
+                    $new_subject = filter_var($wgRequest->getVal('subject'), FILTER_SANITIZE_STRING);
+                    $new_url = filter_var($wgRequest->getVal('url'), FILTER_VALIDATE_URL);
 
                     if (empty($new_url)) {
                         throw new Exception("url not validate", 1);
                     }
 
-                    if (empty($_POST['enable'])) {
+                    if (empty($wgRequest->getVal('enable'))) {
                         $new_enable=0;
                     } else {
                         $new_enable=1;
@@ -48,86 +47,82 @@ class SpecialRelatedLinks extends SpecialPage
                     if ($dbw -> tableExists('related_links')) {
                         $tbl_links = $dbw -> tableName('related_links');
                     } else {
-                        $result = initiateSettingsForRelatedLinks();
+                        $result = RelatedLinksHooks::initiateSettingsForRelatedLinks();
                         if (!$result) {
                             die('Failed to create table Related Links');
                         }
                         $tbl_links = $dbw -> tableName('related_links');
                     }
 
-                    ob_start();
-                    echo '<strong>' . $link_id . '</strong>';
-                    $output = ob_get_contents();
-                    ob_clean();
+                    $output = '<strong>' . $link_id . '</strong>';
 
                     // insert new related site
                     $order = $dbw -> selectField($tbl_links, 'MAX( links_order )', array('links_id' => $link_id));
                     $order = ($order) ? $order + 1 : 1;
                     $data = array('user_id' => $wgUser->getId(),'links_order' => $order, 'links_subject' => $new_subject, 'links_url' => $new_url, 'links_enable' => $new_enable, 'links_datetime' => date("Y-m-d H:i:s"), 'links_id' => $link_id);
                     $result = $dbw -> insert($tbl_links, $data);
-                    $output .= '<h4>'.wfMessage('insert_related_links').'</h4>' . '<ul><li>' . $_POST['subject'] . ' (' . $new_url . ')</li></ul>';
+                    $output .= '<h4>'.wfMessage('insert_related_links').'</h4>' . '<ul><li>' .
+                        htmlspecialchars($wgRequest->getVal('subject')) . ' (' .
+                        htmlspecialchars($new_url) . ')</li></ul>';
 
                     // return link
-                    $output .= '<br /><a href="' . $return_url . '">'.wfMessage('return_page').'</a>';
+                    $output .= '<br /><a href="' . htmlspecialchars($return_url) . '">'.
+                        wfMessage('return_page').'</a>';
 
                     break;
                 case 'DELETE':
                     $dbw = wfGetDB(DB_MASTER);
                     $tbl_links = $dbw -> tableName('related_links');
 
-                    ob_start();
-                    echo '<strong>' . $link_id . '</strong>';
-
-                    $output = ob_get_contents();
-                    ob_clean();
+                    $output = '<strong>' . $link_id . '</strong>';
 
                     // delete sidebar
-                    if ($_POST['check']) {
-                        $result = $dbw -> delete($tbl_links, array('id' => $_POST['check']));
+                    if ($wgRequest->getVal('check')) {
+                        $result = $dbw -> delete($tbl_links, array('id' => $wgRequest->getVal('check')));
                         $output .= '<h4>'.wfMessage('delete_related_links').'</h4>';
                     }
 
                     // return link
-                    $output .= '<br /><a href="' . $return_url . '">'.wfMessage('return_page').'</a>';
+                    $output .= '<br /><a href="' . htmlspecialchars($return_url) . '">'.
+                        wfMessage('return_page').'</a>';
                     break;
                 default:
                     $dbw = wfGetDB(DB_MASTER);
                     $tbl_links = $dbw -> tableName('related_links');
 
-                    ob_start();
-                    echo '<strong>' . $link_id . '</strong>';
-                    $output = ob_get_contents();
-                    ob_clean();
+                    $output = '<strong>' . $link_id . '</strong>';
 
                     // update sidebars
                     $output .= '<h4>'.wfMessage('update_related_links').'</h4>' . '<ul>';
 
-                    foreach ($_POST['order'] as $index => $order) {
+                    foreach ($wgRequest->getVal('order') as $index => $order) {
                         $links_enable=0;
-                        $subject = filter_var($_POST['subject'][$index], FILTER_SANITIZE_STRING);
-                        $url = filter_var($_POST['url'][$index], FILTER_VALIDATE_URL);
+                        $subject = filter_var($wgRequest->getVal('subject')[$index], FILTER_SANITIZE_STRING);
+                        $url = filter_var($wgRequest->getVal('url')[$index], FILTER_VALIDATE_URL);
 
-                        if (isset($_POST['enable'][$index])) {
+                        if (isset($wgRequest->getVal('enable')[$index])) {
                             $links_enable=1;
                         }
 
                         $data = array('links_order' => $order, 'links_subject' => $subject, 'links_url' => $url, 'links_enable' => $links_enable);
                         $dbw -> update($tbl_links, $data, array('id' => $index));
-                        $output .= '<li>' . $subject . ' (' . $url . ')' . ($links_enable ? ' : '.wfMessage('enable') : ' : '.wfMessage('disable')) . '</li>';
+                        $output .= '<li>' . $subject . ' (' . htmlspecialchars($url) . ')' .
+                            ($links_enable ? ' : '.wfMessage('enable') : ' : '.wfMessage('disable')) . '</li>';
                     }
 
                     $output .= '</ul>';
 
                     // return link
-                    $output .= '<br /><a href="' . $return_url . '">'.wfMessage('return_page').'</a>';
+                    $output .= '<br /><a href="' . htmlspecialchars($return_url) . '">'.
+                        wfMessage('return_page').'</a>';
             }
         } else {
-            $dbr = wfGetDB(DB_SLAVE);
+            $dbr = wfGetDB(defined('DB_SLAVE') ? DB_SLAVE : DB_REPLICA);
 
             if ($dbr -> tableExists('related_links')) {
                 $tbl_links = $dbr -> tableName('related_links');
             } else {
-                $result = initiateSettingsForRelatedLinks();
+                $result = RelatedLinksHooks::initiateSettingsForRelatedLinks();
                 if (!$result) {
                     die('Failed to create table Related Links');
                 }
@@ -170,11 +165,11 @@ class SpecialRelatedLinks extends SpecialPage
 							<?php while ($row = $dbr->fetchObject($result)) {
                 ?>
 							<tr>
-								<td><input type="number" name="order[<?=$row -> id ?>]" value="<?=$row -> links_order ?>" min="1" class="s_order" /></td>
-								<td><input type="text" name="subject[<?=$row -> id ?>]" value="<?=$row -> links_subject ?>" style="width: 92%;" /></td>
-								<td><input type="url" name="url[<?=$row -> id ?>]" value="<?=$row -> links_url ?>" style="width: 92%;" /></td>
-								<td><input type="checkbox" name="enable[<?=$row -> id ?>]" value="1"<?=($row -> links_enable == '1' ? ' checked' : '') ?> /></td>
-								<td><input type="checkbox" class="checkitem" name="check[<?=$row -> id ?>]" value="<?=$row -> id ?>" /></td>
+								<td><input type="number" name="order[<?=htmlspecialchars($row -> id) ?>]" value="<?=htmlspecialchars($row -> links_order) ?>" min="1" class="s_order" /></td>
+								<td><input type="text" name="subject[<?=htmlspecialchars($row -> id) ?>]" value="<?=htmlspecialchars($row -> links_subject) ?>" style="width: 92%;" /></td>
+								<td><input type="url" name="url[<?=htmlspecialchars($row -> id) ?>]" value="<?=htmlspecialchars($row -> links_url) ?>" style="width: 92%;" /></td>
+								<td><input type="checkbox" name="enable[<?=htmlspecialchars($row -> id) ?>]" value="1"<?=($row -> links_enable == '1' ? ' checked' : '') ?> /></td>
+								<td><input type="checkbox" class="checkitem" name="check[<?=htmlspecialchars($row -> id) ?>]" value="<?=htmlspecialchars($row -> id) ?>" /></td>
 							</tr>
 							<?php
 
@@ -195,7 +190,7 @@ class SpecialRelatedLinks extends SpecialPage
 					<form id="related_links_insert_form" method="post" action="">
             <fieldset>
 							<legend><?php echo wfMessage('insert') ?></legend>
-						<input type="hidden" name="link_id" value="<?=$_GET['link_id'] ?>" />
+						<input type="hidden" name="link_id" value="<?=htmlspecialchars($wgRequest->getVal('link_id')) ?>" />
 						<input type="hidden" name="submit_type" value="insert" />
 						<table class="lieTable" style="width: 100%;">
               <colgroup>
@@ -233,7 +228,7 @@ class SpecialRelatedLinks extends SpecialPage
 
 				<?php
                 $output = ob_get_contents();
-            ob_clean();
+            ob_end_clean();
         }
         $wgOutput -> addHTML($output);
     }

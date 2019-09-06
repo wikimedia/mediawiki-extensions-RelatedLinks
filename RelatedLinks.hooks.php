@@ -6,35 +6,36 @@
  * @ingroup Extensions
  */
 
-function initiateSettingsForRelatedLinks()
-{
-    $dbw = wfGetDB(DB_MASTER);
-    $query    = "CREATE TABLE " . $dbw->tableName('related_links') . " ( " .
-        "	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, " .
-        "	`user_id` INT(10) UNSIGNED NOT NULL, " .
-        "	`links_id` VARCHAR(60) NOT NULL DEFAULT '', " .
-        "	`links_order` TINYINT(3) NOT NULL DEFAULT 0, " .
-        "	`links_subject` VARCHAR(60) NOT NULL, " .
-        "	`links_url` VARCHAR(255) NOT NULL, " .
-        "	`links_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0, " .
-        "	`links_datetime` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', " .
-        "	`links_import_domain` VARCHAR(50) NOT NULL DEFAULT '', " .
-        "	PRIMARY KEY (`id`), " .
-        "	UNIQUE KEY (`user_id`, `links_id`, `links_url`), " .
-        "	KEY index_sort (`links_id`, `links_order`)" .
-        ")";
-    return $dbw->query($query);
-}
-
 class RelatedLinksHooks
 {
+
+    public static function initiateSettingsForRelatedLinks()
+    {
+        $dbw = wfGetDB(DB_MASTER);
+        $query    = "CREATE TABLE " . $dbw->tableName('related_links') . " ( " .
+            "	`id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT, " .
+            "	`user_id` INT(10) UNSIGNED NOT NULL, " .
+            "	`links_id` VARCHAR(60) NOT NULL DEFAULT '', " .
+            "	`links_order` TINYINT(3) NOT NULL DEFAULT 0, " .
+            "	`links_subject` VARCHAR(60) NOT NULL, " .
+            "	`links_url` VARCHAR(255) NOT NULL, " .
+            "	`links_enable` TINYINT(1) UNSIGNED NOT NULL DEFAULT 0, " .
+            "	`links_datetime` DATETIME NOT NULL DEFAULT '0000-00-00 00:00:00', " .
+            "	`links_import_domain` VARCHAR(50) NOT NULL DEFAULT '', " .
+            "	PRIMARY KEY (`id`), " .
+            "	UNIQUE KEY (`user_id`, `links_id`, `links_url`), " .
+            "	KEY index_sort (`links_id`, `links_order`)" .
+            ")";
+        return $dbw->query($query);
+    }
+
     /*
       * Draw Related Links Management
       */
     public static function SkinTemplateToolboxEnd($sk)
     {
         global $wgRequest;
-        $dbr = wfGetDB(DB_SLAVE);
+        $dbr = wfGetDB(defined('DB_SLAVE') ? DB_SLAVE : DB_REPLICA);
 
         if ($dbr->tableExists('related_links')) {
             $tbl_links = $dbr->tableName('related_links');
