@@ -1,8 +1,12 @@
+/* eslint-env node, es6 */
 module.exports = function ( grunt ) {
-	grunt.loadNpmTasks( 'grunt-jsonlint' );
+	grunt.loadNpmTasks( 'grunt-eslint' );
 
 	grunt.initConfig( {
-		jsonlint: {
+		eslint: {
+			options: {
+				cache: true
+			},
 			all: [
 				'**/*.json',
 				'!node_modules/**',
@@ -11,6 +15,6 @@ module.exports = function ( grunt ) {
 		}
 	} );
 
-	grunt.registerTask( 'test', [ 'jsonlint' ] );
+	grunt.registerTask( 'test', [ 'eslint' ] );
 	grunt.registerTask( 'default', 'test' );
 };

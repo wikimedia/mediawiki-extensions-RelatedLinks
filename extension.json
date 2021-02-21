@@ -20,13 +20,13 @@
 		"remoteExtPath": "RelatedLinks/modules"
 	},
 	"Hooks": {
-		"MonoBookTemplateToolboxEnd": ["RelatedLinksHooks::SkinTemplateToolboxEnd"]
+		"MonoBookTemplateToolboxEnd": [ "RelatedLinksHooks::SkinTemplateToolboxEnd" ]
 	},
 	"ExtensionMessagesFiles": {
 		"RelatedLinksAlias": "RelatedLinks.alias.php"
 	},
 	"MessagesDirs": {
-		"RelatedLinks": ["i18n"]
+		"RelatedLinks": [ "i18n" ]
 	},
 	"SpecialPages": {
 		"RelatedLinks": "SpecialRelatedLinks"
